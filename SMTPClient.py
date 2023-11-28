@@ -2,6 +2,15 @@ from socket import *
 import ssl
 import base64
 from email.base64mime import body_encode as encode_base64
+import os
+
+from dotenv import load_dotenv, find_dotenv
+
+dotenv_path = find_dotenv()
+
+load_dotenv(dotenv_path)
+
+envpassword = os.getenv("PASSWORD")
 
 def auth_plain(sender_email, password):
     return "\0%s\0%s" % (sender_email, password)
@@ -42,7 +51,7 @@ print(recv1)
 # Wait for the server's response before sending the username and password
 if recv1.startswith(b'334'):
     username = 'yuvalsmith1@gmail.com'
-    password = 'ivcwqvbjunbdlwjy'
+    password = envpassword
     auth_string = '\0{0}\0{1}'.format(username, password)
     auth_bytes = base64.b64encode(auth_string.encode())
     ssl_clientSocket.send(auth_bytes + b'\r\n')
