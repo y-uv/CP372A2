@@ -1,3 +1,12 @@
+# Name: Yuval Smith (Solo no group)
+# Email: smit0826@mylaurier.ca
+# Class: CP372
+# Professor: Rudafshani
+# Assignment: 2
+# Application uses environment variable for security reasons.
+# Image sending functionality is implemented.
+# https://github.com/y-uv/CP372A2
+
 from socket import *
 import ssl
 import base64
@@ -28,8 +37,7 @@ msg['Subject'] = 'Sent with SMTPClient.py'
 body = 'This email was sent with SMTPClient.py!\r\nWe appreciate you using this tool!'
 msg.attach(MIMEText(body, 'plain'))
 
-# Open the file in bynary mode
-# Open the file in bynary mode
+# Open the file
 with open('cat_with_bear.jpg', 'rb') as binary_file:
     mime = MIMEBase('image', 'jpg', filename='cat_with_bear.jpg')
     # Add header
