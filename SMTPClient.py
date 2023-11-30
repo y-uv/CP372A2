@@ -3,21 +3,49 @@ import ssl
 import base64
 from email.base64mime import body_encode as encode_base64
 import os
-
 from dotenv import load_dotenv, find_dotenv
+from email.mime.multipart import MIMEMultipart
+from email.mime.base import MIMEBase
+from email.mime.text import MIMEText
+from email import encoders
 
 dotenv_path = find_dotenv()
-
 load_dotenv(dotenv_path)
-
 envpassword = os.getenv("PASSWORD")
 
 def auth_plain(sender_email, password):
     return "\0%s\0%s" % (sender_email, password)
 
-msg = "Subject: Sent with SMTPClient.py\r\n\r\nThis email was sent with SMTPClient.py!\r\nWe appreciate you using this tool!"
-endmsg = "\r\n.\r\n"
-mailserver = 'smtp.gmail.com'
+# Create a multipart message
+msg = MIMEMultipart()
+
+# Set the email parameters
+msg['From'] = 'yuvalsmith1@gmail.com'
+msg['To'] = 'yuval.g.smith@gmail.com'
+msg['Subject'] = 'Sent with SMTPClient.py'
+
+# Attach the body of the email
+body = 'This email was sent with SMTPClient.py!\r\nWe appreciate you using this tool!'
+msg.attach(MIMEText(body, 'plain'))
+
+# Open the file in bynary mode
+# Open the file in bynary mode
+with open('cat_with_bear.jpg', 'rb') as binary_file:
+    mime = MIMEBase('image', 'jpg', filename='cat_with_bear.jpg')
+    # Add header
+    mime.add_header('Content-Disposition', 'attachment', filename='cat_with_bear.jpg')
+    # Read the file content and encode into base64
+    mime.set_payload(binary_file.read())
+    encoders.encode_base64(mime)
+
+    # Add the image to the email
+    msg.attach(mime)
+
+# Convert the multipart message to a string
+msg_str = msg.as_string()
+
+# Define the SMTP server
+mailserver = "smtp.gmail.com"
 
 clientSocket = socket(AF_INET, SOCK_STREAM)
 clientSocket.connect((mailserver, 587))
@@ -78,9 +106,10 @@ ssl_clientSocket.send(data.encode())
 recv4 = ssl_clientSocket.recv(1024)
 print("DATA command sent")
 
-ssl_clientSocket.send(msg.encode())
+msg_str += '\r\n.\r\n'
+ssl_clientSocket.send(msg_str.encode())
 print("Message sent")
-ssl_clientSocket.send(endmsg.encode())
+
 recv5 = ssl_clientSocket.recv(1024)
 print(recv5)
 
